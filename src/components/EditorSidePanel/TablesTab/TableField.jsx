@@ -29,6 +29,40 @@ export default function TableField({ data, tid, index, inherited }) {
     <div className="hover-1 my-2 flex gap-2 items-center">
       <DragHandle readOnly={layout.readOnly} id={data.id} />
 
+    <div className="min-w-20 flex-1/3">
+        <Input
+          value={data.comment}
+          id={`scroll_table_${tid}_input_${index}`}
+          validateStatus={
+            data.comment.trim() === "" || inherited ? "error" : "default"
+          }
+          readonly={layout.readOnly}
+          placeholder={t("comment")}
+          onChange={(value) => updateField(tid, data.id, { comment: value })}
+          onFocus={(e) => setEditField({ name: e.target.value })}
+          onBlur={(e) => {
+            if (e.target.value === editField.comment) return;
+            setUndoStack((prev) => [
+              ...prev,
+              {
+                action: Action.EDIT,
+                element: ObjectType.TABLE,
+                component: "field",
+                tid: tid,
+                fid: data.id,
+                undo: editField,
+                redo: { comment: e.target.value },
+                message: t("edit_table", {
+                  tableName: table.comment,
+                  extra: "[field]",
+                }),
+              },
+            ]);
+            setRedoStack([]);
+          }}
+        />
+      </div>
+
       <div className="min-w-20 flex-1/3">
         <Input
           value={data.name}
