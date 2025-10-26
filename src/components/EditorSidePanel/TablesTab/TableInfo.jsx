@@ -83,6 +83,38 @@ export default function TableInfo({ data }) {
     <div>
       <div className="flex items-center mb-2.5">
         <div className="text-md font-semibold break-keep">{t("name")}:</div>
+        <TextArea
+              field="comment"
+              value={data.comment}
+              readonly={layout.readOnly}
+              className="ms-2"
+              autosize
+              placeholder={t("comment")}
+              rows={1}
+              onChange={(value) =>
+                updateTable(data.id, { comment: value }, false)
+              }
+              onFocus={(e) => setEditField({ comment: e.target.value })}
+              onBlur={(e) => {
+                if (e.target.value === editField.comment) return;
+                setUndoStack((prev) => [
+                  ...prev,
+                  {
+                    action: Action.EDIT,
+                    element: ObjectType.TABLE,
+                    component: "self",
+                    tid: data.id,
+                    undo: editField,
+                    redo: { comment: e.target.value },
+                    message: t("edit_table", {
+                      tableName: e.target.value,
+                      extra: "[comment]",
+                    }),
+                  },
+                ]);
+                setRedoStack([]);
+              }}
+            />
         <Input
           value={data.name}
           validateStatus={data.name.trim() === "" ? "error" : "default"}
@@ -202,48 +234,6 @@ export default function TableInfo({ data }) {
           </Collapse>
         </Card>
       )}
-
-      <Card
-        bodyStyle={{ padding: "4px" }}
-        style={{ marginTop: "12px", marginBottom: "12px" }}
-        headerLine={false}
-      >
-        <Collapse keepDOM={false} lazyRender>
-          <Collapse.Panel header={t("comment")} itemKey="1">
-            <TextArea
-              field="comment"
-              value={data.comment}
-              readonly={layout.readOnly}
-              autosize
-              placeholder={t("comment")}
-              rows={1}
-              onChange={(value) =>
-                updateTable(data.id, { comment: value }, false)
-              }
-              onFocus={(e) => setEditField({ comment: e.target.value })}
-              onBlur={(e) => {
-                if (e.target.value === editField.comment) return;
-                setUndoStack((prev) => [
-                  ...prev,
-                  {
-                    action: Action.EDIT,
-                    element: ObjectType.TABLE,
-                    component: "self",
-                    tid: data.id,
-                    undo: editField,
-                    redo: { comment: e.target.value },
-                    message: t("edit_table", {
-                      tableName: e.target.value,
-                      extra: "[comment]",
-                    }),
-                  },
-                ]);
-                setRedoStack([]);
-              }}
-            />
-          </Collapse.Panel>
-        </Collapse>
-      </Card>
 
       <div className="flex justify-between items-center gap-1 mb-2">
         <ColorPicker
