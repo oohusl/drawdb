@@ -160,7 +160,7 @@ export default function Table({
             }`}
           >
             <div className="px-3 overflow-hidden text-ellipsis whitespace-nowrap">
-              {tableData.name}
+              {`${tableData.comment}  (${tableData.name})`}
             </div>
             <div className="hidden group-hover:block">
               <div className="flex justify-end items-center mx-2 space-x-1.5">
@@ -419,6 +419,9 @@ export default function Table({
               }));
             }}
           />
+          <span className="overflow-hidden text-ellipsis whitespace-nowrap">
+            {fieldData.comment}
+          </span>
           <span className="overflow-hidden text-ellipsis whitespace-nowrap">
             {fieldData.name}
           </span>
